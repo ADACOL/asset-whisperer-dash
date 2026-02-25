@@ -19,13 +19,13 @@ function generateResponse(question: string): string {
     return `There are ${uncert.length} machines without certificates:\n${uncert.map(a => `• ${a.name} (${a.type}) — ${a.location}`).join("\n")}`;
   }
   if (q.includes("server")) {
-    const servers = mockAssets.filter(a => a.type === "Server");
+    const servers = mockAssets.filter(a => a.type === "Server Peda");
     return `There are ${servers.length} servers. All ${servers.filter(a => a.certificateInstalled).length === servers.length ? "have" : "don't all have"} certificates installed.`;
   }
-  if (q.includes("printer")) {
-    const printers = mockAssets.filter(a => a.type === "Printer");
-    const cert = printers.filter(a => a.certificateInstalled).length;
-    return `There are ${printers.length} printers. ${cert} have certificates, ${printers.length - cert} do not.`;
+  if (q.includes("other") || q.includes("printer") || q.includes("scanner")) {
+    const others = mockAssets.filter(a => a.type === "Other");
+    const cert = others.filter(a => a.certificateInstalled).length;
+    return `There are ${others.length} other devices. ${cert} have certificates, ${others.length - cert} do not.`;
   }
   if (q.includes("laptop")) {
     const laptops = mockAssets.filter(a => a.type === "Laptop");

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Shield } from "lucide-react";
 import { useAssetStats } from "@/hooks/useAssetStats";
 import { StatsCards } from "@/components/StatsCards";
@@ -5,9 +6,13 @@ import { AssetTypeBreakdown } from "@/components/AssetTypeBreakdown";
 import { CertificateDonut } from "@/components/CertificateDonut";
 import { AssetTable } from "@/components/AssetTable";
 import { AssetChat } from "@/components/AssetChat";
+import type { AssetType } from "@/data/assets";
 
 const Index = () => {
   const { total, certified, uncertified, score, byType, assets } = useAssetStats();
+  const [selectedType, setSelectedType] = useState<AssetType | null>(null);
+
+  const filteredAssets = selectedType ? assets.filter(a => a.type === selectedType) : assets;
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
@@ -29,12 +34,12 @@ const Index = () => {
         {/* Charts + Chat row */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <CertificateDonut byType={byType} score={score} />
-          <AssetTypeBreakdown byType={byType} />
+          <AssetTypeBreakdown byType={byType} selectedType={selectedType} onSelectType={setSelectedType} />
           <AssetChat />
         </div>
 
         {/* Table */}
-        <AssetTable assets={assets} />
+        <AssetTable assets={filteredAssets} selectedType={selectedType} onClearFilter={() => setSelectedType(null)} />
       </div>
     </div>
   );

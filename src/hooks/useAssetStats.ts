@@ -1,7 +1,7 @@
 import { mockAssets, assetTypeIcons, assetTypeColors, type AssetType } from "@/data/assets";
 import { useMemo } from "react";
 
-const ASSET_TYPES: AssetType[] = ["Server Peda", "Desktop Peda", "Desktop Admin", "Laptop", "Monitor", "Other"];
+const ASSET_TYPES: AssetType[] = ["Server Peda", "Desktop Peda", "Desktop Admin", "Laptop", "Other"];
 
 export function useAssetStats() {
   return useMemo(() => {

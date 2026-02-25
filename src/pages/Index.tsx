@@ -5,7 +5,7 @@ import { StatsCards } from "@/components/StatsCards";
 import { AssetTypeBreakdown } from "@/components/AssetTypeBreakdown";
 import { CertificateDonut } from "@/components/CertificateDonut";
 import { AssetTable } from "@/components/AssetTable";
-import { AssetChat } from "@/components/AssetChat";
+import { CertificateChecker } from "@/components/CertificateChecker";
 import type { AssetType } from "@/data/assets";
 
 const Index = () => {
@@ -35,7 +35,7 @@ const Index = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <CertificateDonut byType={byType} score={score} />
           <AssetTypeBreakdown byType={byType} selectedType={selectedType} onSelectType={setSelectedType} />
-          <AssetChat />
+          <CertificateChecker />
         </div>
 
         {/* Table */}

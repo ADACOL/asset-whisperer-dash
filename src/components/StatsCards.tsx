@@ -10,17 +10,20 @@ interface StatsCardsProps {
   onCertifiedClick?: () => void;
   onUncertifiedClick?: () => void;
   onNotCheckedClick?: () => void;
+  onScoreClick?: () => void;
 }
 
-export function StatsCards({ total, certified, uncertified, notChecked, score, onTotalClick, onCertifiedClick, onUncertifiedClick, onNotCheckedClick }: StatsCardsProps) {
+export function StatsCards({ total, certified, uncertified, notChecked, score, onTotalClick, onCertifiedClick, onUncertifiedClick, onNotCheckedClick, onScoreClick }: StatsCardsProps) {
   const cards = [
     { label: "Total Assets", value: total, icon: Monitor, accent: "primary" as const, onClick: onTotalClick },
-    { label: "Certificate Score", value: `${score}%`, icon: Shield, accent: "primary" as const, onClick: undefined },
+    { label: "Certificate Score", value: `${score}%`, icon: Shield, accent: "primary" as const, onClick: onScoreClick },
     { label: "Certified", value: certified, icon: CheckCircle2, accent: "success" as const, onClick: onCertifiedClick },
+    { label: "Not Certified", value: uncertified, icon: XCircle, accent: "destructive" as const, onClick: onUncertifiedClick },
+    { label: "Not Checked", value: notChecked, icon: AlertTriangle, accent: "warning" as const, onClick: onNotCheckedClick },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
       {cards.map((card, i) => (
         <div
           key={card.label}
@@ -34,6 +37,10 @@ export function StatsCards({ total, certified, uncertified, notChecked, score, o
             className={`flex items-center justify-center w-11 h-11 rounded-lg ${
               card.accent === "success"
                 ? "bg-success/15 text-success"
+                : card.accent === "destructive"
+                ? "bg-destructive/15 text-destructive"
+                : card.accent === "warning"
+                ? "bg-warning/15 text-warning"
                 : "bg-primary/15 text-primary"
             }`}
           >
@@ -45,37 +52,6 @@ export function StatsCards({ total, certified, uncertified, notChecked, score, o
           </div>
         </div>
       ))}
-      {/* Not Certified + Not Checked combined card */}
-      <div
-        className="glass-card rounded-lg p-5 animate-fade-in flex gap-4"
-        style={{ animationDelay: `${cards.length * 80}ms` }}
-      >
-        <div
-          onClick={onUncertifiedClick}
-          className="flex-1 flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
-        >
-          <div className="flex items-center justify-center w-11 h-11 rounded-lg bg-destructive/15 text-destructive">
-            <XCircle className="w-5 h-5" />
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Not Certified</p>
-            <p className="text-2xl font-bold tracking-tight">{uncertified}</p>
-          </div>
-        </div>
-        <div className="w-px bg-border/50" />
-        <div
-          onClick={onNotCheckedClick}
-          className="flex-1 flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
-        >
-          <div className="flex items-center justify-center w-11 h-11 rounded-lg bg-warning/15 text-warning">
-            <AlertTriangle className="w-5 h-5" />
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Not Checked</p>
-            <p className="text-2xl font-bold tracking-tight">{notChecked}</p>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

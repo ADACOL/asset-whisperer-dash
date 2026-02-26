@@ -6,14 +6,16 @@ interface StatsCardsProps {
   uncertified: number;
   score: number;
   onTotalClick?: () => void;
+  onCertifiedClick?: () => void;
+  onUncertifiedClick?: () => void;
 }
 
-export function StatsCards({ total, certified, uncertified, score, onTotalClick }: StatsCardsProps) {
+export function StatsCards({ total, certified, uncertified, score, onTotalClick, onCertifiedClick, onUncertifiedClick }: StatsCardsProps) {
   const cards = [
-    { label: "Total Assets", value: total, icon: Monitor, accent: "primary" as const, clickable: true },
-    { label: "Certificate Score", value: `${score}%`, icon: Shield, accent: "primary" as const, clickable: false },
-    { label: "Certified", value: certified, icon: CheckCircle2, accent: "success" as const, clickable: false },
-    { label: "Not Certified", value: uncertified, icon: XCircle, accent: "destructive" as const, clickable: false },
+    { label: "Total Assets", value: total, icon: Monitor, accent: "primary" as const, onClick: onTotalClick },
+    { label: "Certificate Score", value: `${score}%`, icon: Shield, accent: "primary" as const, onClick: undefined },
+    { label: "Certified", value: certified, icon: CheckCircle2, accent: "success" as const, onClick: onCertifiedClick },
+    { label: "Not Certified", value: uncertified, icon: XCircle, accent: "destructive" as const, onClick: onUncertifiedClick },
   ];
 
   return (
@@ -21,9 +23,9 @@ export function StatsCards({ total, certified, uncertified, score, onTotalClick 
       {cards.map((card, i) => (
         <div
           key={card.label}
-          onClick={card.clickable ? onTotalClick : undefined}
+          onClick={card.onClick}
           className={`glass-card rounded-lg p-5 flex items-center gap-4 animate-fade-in ${
-            card.clickable ? "cursor-pointer hover:ring-1 hover:ring-primary/40 transition-all" : ""
+            card.onClick ? "cursor-pointer hover:ring-1 hover:ring-primary/40 transition-all" : ""
           }`}
           style={{ animationDelay: `${i * 80}ms` }}
         >

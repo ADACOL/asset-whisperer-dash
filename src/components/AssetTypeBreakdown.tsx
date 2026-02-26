@@ -1,3 +1,4 @@
+import { Laptop, PackageOpen } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { AssetType } from "@/data/assets";
 
@@ -18,16 +19,46 @@ interface AssetTypeBreakdownProps {
 }
 
 export function AssetTypeBreakdown({ byType, selectedType, onSelectType }: AssetTypeBreakdownProps) {
+  // Separate main types from laptop+other, then merge laptop+other
+  const mainTypes = byType.filter(t => t.type !== "Laptop" && t.type !== "Other");
+  const laptopOther = byType.filter(t => t.type === "Laptop" || t.type === "Other");
+  
+  const mergedTotal = laptopOther.reduce((s, t) => s + t.total, 0);
+  const mergedCertified = laptopOther.reduce((s, t) => s + t.certified, 0);
+  const mergedPercentage = mergedTotal > 0 ? Math.round((mergedCertified / mergedTotal) * 100) : 0;
+  
+  const mergedItem: TypeStat = {
+    type: "Laptop & Other",
+    total: mergedTotal,
+    certified: mergedCertified,
+    uncertified: mergedTotal - mergedCertified,
+    percentage: mergedPercentage,
+    icon: Laptop,
+    color: "hsl(var(--warning))",
+  };
+
+  const allItems = [...mainTypes, mergedItem];
+  const isMergedSelected = selectedType === "Laptop" || selectedType === "Other";
+
   return (
     <div className="glass-card rounded-lg p-6 animate-fade-in" style={{ animationDelay: "320ms" }}>
       <h2 className="text-lg font-semibold mb-5">Certificate Status by Type</h2>
       <div className="space-y-4">
-        {byType.map((item) => {
-          const isSelected = selectedType === item.type;
+        {allItems.map((item) => {
+          const isMerged = item.type === "Laptop & Other";
+          const isSelected = isMerged ? isMergedSelected : selectedType === item.type;
+          
           return (
             <button
               key={item.type}
-              onClick={() => onSelectType(isSelected ? null : item.type as AssetType)}
+              onClick={() => {
+                if (isMerged) {
+                  // Toggle: cycle through null -> show both laptop+other types
+                  onSelectType(isMergedSelected ? null : "Laptop" as AssetType);
+                } else {
+                  onSelectType(isSelected ? null : item.type as AssetType);
+                }
+              }}
               className={`w-full flex items-center gap-3 p-2 rounded-lg transition-all cursor-pointer ${
                 isSelected
                   ? "bg-primary/10 ring-1 ring-primary/30"

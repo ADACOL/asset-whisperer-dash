@@ -1,11 +1,43 @@
-import { CheckCircle2, XCircle, X } from "lucide-react";
+import { CheckCircle2, XCircle, X, Download } from "lucide-react";
 import type { Asset, AssetType } from "@/data/assets";
 import { assetTypeIcons } from "@/data/assets";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 interface AssetTableProps {
   assets: Asset[];
   selectedType: AssetType | null;
   onClearFilter: () => void;
+}
+
+function exportCSV(assets: Asset[]) {
+  const header = "Name,IP,Type,Certificate,Last Check\n";
+  const rows = assets.map(a =>
+    `${a.name},${a.ip},${a.type},${a.certificateInstalled ? "Certified" : "Not Certified"},${a.lastSeen}`
+  ).join("\n");
+  const blob = new Blob([header + rows], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "asset_inventory.csv";
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportPDF(assets: Asset[]) {
+  const doc = new jsPDF();
+  doc.setFontSize(16);
+  doc.text("Asset Inventory", 14, 20);
+  autoTable(doc, {
+    startY: 30,
+    head: [["Name", "IP", "Type", "Certificate", "Last Check"]],
+    body: assets.map(a => [
+      a.name, a.ip, a.type,
+      a.certificateInstalled ? "Certified" : "Not Certified",
+      a.lastSeen,
+    ]),
+  });
+  doc.save("asset_inventory.pdf");
 }
 
 export function AssetTable({ assets, selectedType, onClearFilter }: AssetTableProps) {
@@ -18,15 +50,31 @@ export function AssetTable({ assets, selectedType, onClearFilter }: AssetTablePr
             {selectedType ? `Filtered by ${selectedType}` : "All machines and their certificate status"}
           </p>
         </div>
-        {selectedType && (
+        <div className="flex items-center gap-2">
+          {selectedType && (
+            <button
+              onClick={onClearFilter}
+              className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <X className="w-3 h-3" />
+              Clear filter
+            </button>
+          )}
           <button
-            onClick={onClearFilter}
-            className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground transition-colors"
+            onClick={() => exportCSV(assets)}
+            className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md bg-secondary hover:bg-secondary/80 text-secondary-foreground transition-colors"
           >
-            <X className="w-3 h-3" />
-            Clear filter
+            <Download className="w-3 h-3" />
+            CSV
           </button>
-        )}
+          <button
+            onClick={() => exportPDF(assets)}
+            className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md bg-secondary hover:bg-secondary/80 text-secondary-foreground transition-colors"
+          >
+            <Download className="w-3 h-3" />
+            PDF
+          </button>
+        </div>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">

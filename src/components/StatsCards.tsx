@@ -5,14 +5,15 @@ interface StatsCardsProps {
   certified: number;
   uncertified: number;
   score: number;
+  onTotalClick?: () => void;
 }
 
-export function StatsCards({ total, certified, uncertified, score }: StatsCardsProps) {
+export function StatsCards({ total, certified, uncertified, score, onTotalClick }: StatsCardsProps) {
   const cards = [
-    { label: "Total Assets", value: total, icon: Monitor, accent: "primary" as const },
-    { label: "Certificate Score", value: `${score}%`, icon: Shield, accent: "primary" as const },
-    { label: "Certified", value: certified, icon: CheckCircle2, accent: "success" as const },
-    { label: "Not Certified", value: uncertified, icon: XCircle, accent: "destructive" as const },
+    { label: "Total Assets", value: total, icon: Monitor, accent: "primary" as const, clickable: true },
+    { label: "Certificate Score", value: `${score}%`, icon: Shield, accent: "primary" as const, clickable: false },
+    { label: "Certified", value: certified, icon: CheckCircle2, accent: "success" as const, clickable: false },
+    { label: "Not Certified", value: uncertified, icon: XCircle, accent: "destructive" as const, clickable: false },
   ];
 
   return (
@@ -20,7 +21,10 @@ export function StatsCards({ total, certified, uncertified, score }: StatsCardsP
       {cards.map((card, i) => (
         <div
           key={card.label}
-          className="glass-card rounded-lg p-5 flex items-center gap-4 animate-fade-in"
+          onClick={card.clickable ? onTotalClick : undefined}
+          className={`glass-card rounded-lg p-5 flex items-center gap-4 animate-fade-in ${
+            card.clickable ? "cursor-pointer hover:ring-1 hover:ring-primary/40 transition-all" : ""
+          }`}
           style={{ animationDelay: `${i * 80}ms` }}
         >
           <div

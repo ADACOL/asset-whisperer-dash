@@ -117,9 +117,9 @@ export function AssetTable({ assets, selectedType, filterCert, onClearFilter }: 
                     )}
                   </td>
                   <td className="px-6 py-3 text-xs">
-                    {asset.certificateInstalled
-                      ? <span className="text-muted-foreground">{asset.lastSeen}</span>
-                      : <span className="text-destructive font-medium">Not Verified</span>
+                    {asset.lastSeen < "2026-02-24"
+                      ? <span className="text-destructive font-medium">Not Verified</span>
+                      : <span className="text-muted-foreground">{asset.lastSeen}</span>
                     }
                   </td>
                 </tr>

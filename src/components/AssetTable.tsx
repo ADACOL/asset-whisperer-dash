@@ -7,6 +7,7 @@ import autoTable from "jspdf-autotable";
 interface AssetTableProps {
   assets: Asset[];
   selectedType: AssetType | null;
+  filterCert?: "all" | "certified" | "uncertified";
   onClearFilter: () => void;
 }
 
@@ -40,18 +41,24 @@ function exportPDF(assets: Asset[]) {
   doc.save("asset_inventory.pdf");
 }
 
-export function AssetTable({ assets, selectedType, onClearFilter }: AssetTableProps) {
+export function AssetTable({ assets, selectedType, filterCert, onClearFilter }: AssetTableProps) {
   return (
     <div className="glass-card rounded-lg animate-fade-in overflow-hidden" style={{ animationDelay: "400ms" }}>
       <div className="p-6 pb-3 flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold">Asset Inventory</h2>
           <p className="text-sm text-muted-foreground mt-1">
-            {selectedType ? `Filtered by ${selectedType}` : "All machines and their certificate status"}
+            {selectedType
+              ? `Filtered by ${selectedType}`
+              : filterCert === "certified"
+              ? "Showing certified assets"
+              : filterCert === "uncertified"
+              ? "Showing uncertified assets"
+              : "All machines and their certificate status"}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          {selectedType && (
+          {(selectedType || (filterCert && filterCert !== "all")) && (
             <button
               onClick={onClearFilter}
               className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground transition-colors"

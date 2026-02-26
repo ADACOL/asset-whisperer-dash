@@ -13,19 +13,38 @@ import autoTable from "jspdf-autotable";
 const Index = () => {
   const { total, certified, uncertified, score, byType, assets } = useAssetStats();
   const [selectedType, setSelectedType] = useState<AssetType | null>(null);
+  const [filterCert, setFilterCert] = useState<"all" | "certified" | "uncertified">("all");
 
-  const filteredAssets = selectedType
+  let filteredAssets = selectedType
     ? selectedType === "Laptop"
       ? assets.filter(a => a.type === "Laptop" || a.type === "Other")
       : assets.filter(a => a.type === selectedType)
     : assets;
 
-  const handleTotalClick = () => {
-    setSelectedType(null);
-    // Scroll to table
+  if (filterCert === "certified") filteredAssets = filteredAssets.filter(a => a.certificateInstalled);
+  if (filterCert === "uncertified") filteredAssets = filteredAssets.filter(a => !a.certificateInstalled);
+
+  const scrollToTable = () => {
     setTimeout(() => {
       document.getElementById("asset-table")?.scrollIntoView({ behavior: "smooth" });
     }, 100);
+  };
+
+  const handleTotalClick = () => {
+    setSelectedType(null);
+    scrollToTable();
+  };
+
+  const handleCertifiedClick = () => {
+    setFilterCert("certified");
+    setSelectedType(null);
+    scrollToTable();
+  };
+
+  const handleUncertifiedClick = () => {
+    setFilterCert("uncertified");
+    setSelectedType(null);
+    scrollToTable();
   };
 
   const exportStatsPDF = () => {
@@ -70,7 +89,7 @@ const Index = () => {
         </div>
 
         {/* Stats */}
-        <StatsCards total={total} certified={certified} uncertified={uncertified} score={score} onTotalClick={handleTotalClick} />
+        <StatsCards total={total} certified={certified} uncertified={uncertified} score={score} onTotalClick={handleTotalClick} onCertifiedClick={handleCertifiedClick} onUncertifiedClick={handleUncertifiedClick} />
 
         {/* Charts + Checker row */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -81,7 +100,7 @@ const Index = () => {
 
         {/* Table */}
         <div id="asset-table">
-          <AssetTable assets={filteredAssets} selectedType={selectedType} onClearFilter={() => setSelectedType(null)} />
+          <AssetTable assets={filteredAssets} selectedType={selectedType} filterCert={filterCert} onClearFilter={() => { setSelectedType(null); setFilterCert("all"); }} />
         </div>
       </div>
     </div>

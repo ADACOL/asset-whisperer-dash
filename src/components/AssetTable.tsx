@@ -7,7 +7,7 @@ import autoTable from "jspdf-autotable";
 interface AssetTableProps {
   assets: Asset[];
   selectedType: AssetType | null;
-  filterCert?: "all" | "certified" | "uncertified";
+  filterCert?: "all" | "certified" | "uncertified" | "notchecked";
   onClearFilter: () => void;
 }
 
@@ -54,6 +54,8 @@ export function AssetTable({ assets, selectedType, filterCert, onClearFilter }: 
               ? "Showing certified assets"
               : filterCert === "uncertified"
               ? "Showing uncertified assets"
+              : filterCert === "notchecked"
+              ? "Showing not checked assets"
               : "All machines and their certificate status"}
           </p>
         </div>
@@ -114,7 +116,12 @@ export function AssetTable({ assets, selectedType, filterCert, onClearFilter }: 
                       <XCircle className="w-5 h-5 text-destructive inline-block" />
                     )}
                   </td>
-                  <td className="px-6 py-3 text-muted-foreground text-xs">{asset.lastSeen}</td>
+                  <td className="px-6 py-3 text-xs">
+                    {asset.certificateInstalled
+                      ? <span className="text-muted-foreground">{asset.lastSeen}</span>
+                      : <span className="text-destructive font-medium">Not Verified</span>
+                    }
+                  </td>
                 </tr>
               );
             })}

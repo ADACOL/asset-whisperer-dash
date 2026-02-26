@@ -7,6 +7,8 @@ export function useAssetStats() {
   return useMemo(() => {
     const total = mockAssets.length;
     const certified = mockAssets.filter(a => a.certificateInstalled).length;
+    const cutoffDate = "2026-02-24";
+    const notChecked = mockAssets.filter(a => a.lastSeen < cutoffDate).length;
     const score = Math.round((certified / total) * 100);
 
     const byType = ASSET_TYPES.map(type => {
@@ -24,6 +26,6 @@ export function useAssetStats() {
       };
     });
 
-    return { total, certified, uncertified: total - certified, score, byType, assets: mockAssets };
+    return { total, certified, uncertified: total - certified, notChecked, score, byType, assets: mockAssets };
   }, []);
 }

@@ -11,9 +11,9 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 const Index = () => {
-  const { total, certified, uncertified, score, byType, assets } = useAssetStats();
+  const { total, certified, uncertified, notChecked, score, byType, assets } = useAssetStats();
   const [selectedType, setSelectedType] = useState<AssetType | null>(null);
-  const [filterCert, setFilterCert] = useState<"all" | "certified" | "uncertified">("all");
+  const [filterCert, setFilterCert] = useState<"all" | "certified" | "uncertified" | "notchecked">("all");
 
   let filteredAssets = selectedType
     ? selectedType === "Laptop"
@@ -23,6 +23,7 @@ const Index = () => {
 
   if (filterCert === "certified") filteredAssets = filteredAssets.filter(a => a.certificateInstalled);
   if (filterCert === "uncertified") filteredAssets = filteredAssets.filter(a => !a.certificateInstalled);
+  if (filterCert === "notchecked") filteredAssets = filteredAssets.filter(a => a.lastSeen < "2026-02-24");
 
   const scrollToTable = () => {
     setTimeout(() => {
@@ -43,6 +44,12 @@ const Index = () => {
 
   const handleUncertifiedClick = () => {
     setFilterCert("uncertified");
+    setSelectedType(null);
+    scrollToTable();
+  };
+
+  const handleNotCheckedClick = () => {
+    setFilterCert("notchecked");
     setSelectedType(null);
     scrollToTable();
   };
@@ -89,7 +96,7 @@ const Index = () => {
         </div>
 
         {/* Stats */}
-        <StatsCards total={total} certified={certified} uncertified={uncertified} score={score} onTotalClick={handleTotalClick} onCertifiedClick={handleCertifiedClick} onUncertifiedClick={handleUncertifiedClick} />
+        <StatsCards total={total} certified={certified} uncertified={uncertified} notChecked={notChecked} score={score} onTotalClick={handleTotalClick} onCertifiedClick={handleCertifiedClick} onUncertifiedClick={handleUncertifiedClick} onNotCheckedClick={handleNotCheckedClick} />
 
         {/* Charts + Checker row */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">

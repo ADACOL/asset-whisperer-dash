@@ -96,7 +96,7 @@ const Index = () => {
         </div>
 
         {/* Stats */}
-        <StatsCards total={total} certified={certified} uncertified={uncertified} notChecked={notChecked} score={score} onTotalClick={handleTotalClick} onCertifiedClick={handleCertifiedClick} onUncertifiedClick={handleUncertifiedClick} onNotCheckedClick={handleNotCheckedClick} />
+        <StatsCards total={total} certified={certified} uncertified={uncertified} notChecked={notChecked} score={score} onTotalClick={handleTotalClick} onCertifiedClick={handleCertifiedClick} onUncertifiedClick={handleUncertifiedClick} onNotCheckedClick={handleNotCheckedClick} onScoreClick={handleTotalClick} />
 
         {/* Charts + Checker row */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
